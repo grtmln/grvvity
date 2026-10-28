@@ -261,7 +261,8 @@ const RE=/^[A-Za-z0-9.!#$%&'*+\/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-
 const validEmail=v=>v.length<=254&&RE.test(v)&&!v.includes("..")&&!v.startsWith(".")&&!v.split("@")[0].endsWith(".");
 const fail=(m,el)=>{err.textContent=m;email.setAttribute("aria-invalid",el===email?"true":"false");org.setAttribute("aria-invalid",el===org?"true":"false");if(el)el.focus()};
 const isCand=r=>!!r&&r.value==="Candidate (employee)";
-const label=r=>isCand(r)?"Your name":"Your name or company";
+const isPart=r=>!!r&&r.value==="Strategic partner / HR expert";
+const label=r=>isCand(r)?"Your name":isPart(r)?"Your name or organization":"Your name or company";
 const needsName=r=>!!r;
 email.addEventListener("input",()=>{email.removeAttribute("aria-invalid");err.textContent=""});
 org.addEventListener("input",()=>{org.removeAttribute("aria-invalid");err.textContent=""});
@@ -273,7 +274,7 @@ if(hp.value)return;
 const role=form.querySelector("input[name=role]:checked");
 const val=email.value.trim(),name=org.value.trim();
 if(!role){return fail("Please choose how you would like to join.",form.querySelector("input[name=role]"))}
-if(needsName(role)&&!name){return fail(isCand(role)?"Please enter your name.":"Please enter your name or company name.",org)}
+if(needsName(role)&&!name){return fail(isCand(role)?"Please enter your name.":isPart(role)?"Please enter your name or organization.":"Please enter your name or company name.",org)}
 if(!val){return fail("Please enter your e-mail address.",email)}
 if(!validEmail(val)){return fail("Please enter a valid e-mail address, e.g. name@example.com.",email)}
 if(!gdpr.checked){return fail("Please confirm your consent to the processing of personal data.",gdpr)}
@@ -283,7 +284,7 @@ const res=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"applicati
 _subject:"[grvvity] New signup – "+role.value+": "+(needsName(role)?name+" <"+val+">":val),
 _template:"table",_captcha:"false",
 "Signup type":role.value,
-[isCand(role)?"Name":"Name / company"]:name,
+[isCand(role)?"Name":isPart(role)?"Name / organization":"Name / company"]:name,
 "E-mail":val,
 "GDPR consent":"Given on "+new Date().toISOString()+" (controller: Inferea, s. r. o.)",
 "Page":location.href
