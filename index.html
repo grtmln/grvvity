@@ -74,11 +74,13 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:w
 .opt input:checked + .box .t::before{border-color:var(--ink);background:radial-gradient(circle,var(--bg) 0 3px,var(--ink) 3.5px)}
 .opt .d{display:block;color:var(--mist);font-size:.9375rem;line-height:1.5}
 .row{display:flex;gap:10px}
-.row input[type=email]{flex:1;min-width:0;height:52px;padding:0 20px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--ink);font:400 1rem var(--body);transition:border-color .2s}
-.row input[type=email]::placeholder{color:rgba(255,255,255,.4)}
-.row input[type=email]:hover{border-color:rgba(255,255,255,.4)}
-.row input[type=email]:focus{outline:none;border-color:var(--ink)}
-.row input[aria-invalid=true]{border-color:#ff8a80}
+.row input[type=email],.namebox input{height:52px;width:100%;padding:0 20px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--ink);font:400 1rem var(--body);transition:border-color .2s}
+.row input[type=email],.namebox input{box-sizing:border-box}
+.row input[type=email]{flex:1;min-width:0}
+.row input[type=email]::placeholder,.namebox input::placeholder{color:rgba(255,255,255,.4)}
+.row input[type=email]:hover,.namebox input:hover{border-color:rgba(255,255,255,.4)}
+.row input[type=email]:focus,.namebox input:focus{outline:none;border-color:var(--ink)}
+.row input[aria-invalid=true],.namebox input[aria-invalid=true]{border-color:#ff8a80}
 .btn{flex:none;height:52px;padding:0 26px;border:0;border-radius:999px;background:var(--ink);color:var(--bg);font:500 .85rem var(--display);letter-spacing:-.01em;cursor:pointer;transition:opacity .2s}
 .btn:hover{opacity:.88}
 .btn[disabled]{opacity:.5;cursor:progress}
@@ -192,7 +194,7 @@ footer .wrap{animation-delay:.8s}
 <div class="wrap">
 <section class="signup" id="signup" aria-labelledby="signup-h">
 <div>
-<h2 id="signup-h">Be among the first</h2>
+<h2 id="signup-h">Get early access</h2>
 <p class="intro">Sign up with your e-mail and be among the first to use the power of grvvity once we launch.</p>
 </div>
 <form id="signup-form" novalidate>
@@ -201,9 +203,12 @@ footer .wrap{animation-delay:.8s}
 <div class="opts">
 <label class="opt"><input type="radio" name="role" value="Candidate (employee)"><span class="box"><span class="t">For candidates</span><span class="d">Looking for a job or thinking about a change? Just 30 seconds on grvvity can improve your career life.</span></span></label>
 <label class="opt"><input type="radio" name="role" value="Employer"><span class="box"><span class="t">For employers</span><span class="d">Work only with suitable candidates, for a fraction of the money and time of a usual hiring process.</span></span></label>
-<label class="opt wide"><input type="radio" name="role" value="Strategic partner / HR expert"><span class="box"><span class="t">For strategic partners &amp; HR experts</span><span class="d">Help us build a truly fair service that eliminates the problems of recruiting, significantly eases people’s career paths, and saves resources and the planet.</span></span></label>
+<label class="opt wide"><input type="radio" name="role" value="Strategic partner / HR expert"><span class="box"><span class="t">For strategic partners &amp; HR experts</span><span class="d">Help us create a truly fair service that eliminates the problems of today’s recruiting and significantly eases people’s lives.</span></span></label>
 </div>
 </fieldset>
+<div class="namebox" id="namebox" hidden>
+<input type="text" id="org" name="org" placeholder="Your name or company" autocomplete="organization" aria-label="Your name or company" maxlength="120">
+</div>
 <div class="row">
 <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" aria-label="Your e-mail address" maxlength="254" required>
 <button class="btn" type="submit">Notify me</button>
@@ -249,29 +254,36 @@ go(0);
 (()=>{
 const form=document.getElementById("signup-form");
 if(!form)return;
-const email=document.getElementById("email"),gdpr=document.getElementById("gdpr"),err=document.getElementById("err"),hp=document.getElementById("hp");
+const org=document.getElementById("org"),namebox=document.getElementById("namebox"),email=document.getElementById("email"),gdpr=document.getElementById("gdpr"),err=document.getElementById("err"),hp=document.getElementById("hp");
 const btn=form.querySelector(".btn");
 const ENDPOINT="https://formsubmit.co/ajax/milanferencik91@gmail.com";
 const RE=/^[A-Za-z0-9.!#$%&'*+\/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/;
 const validEmail=v=>v.length<=254&&RE.test(v)&&!v.includes("..")&&!v.startsWith(".")&&!v.split("@")[0].endsWith(".");
-const fail=(m,el)=>{err.textContent=m;email.setAttribute("aria-invalid",el===email?"true":"false");if(el)el.focus()};
+const fail=(m,el)=>{err.textContent=m;email.setAttribute("aria-invalid",el===email?"true":"false");org.setAttribute("aria-invalid",el===org?"true":"false");if(el)el.focus()};
+const isCand=r=>!!r&&r.value==="Candidate (employee)";
+const label=r=>isCand(r)?"Your name":"Your name or company";
+const needsName=r=>!!r;
 email.addEventListener("input",()=>{email.removeAttribute("aria-invalid");err.textContent=""});
+org.addEventListener("input",()=>{org.removeAttribute("aria-invalid");err.textContent=""});
+form.querySelectorAll("input[name=role]").forEach(r=>r.addEventListener("change",()=>{namebox.hidden=false;org.placeholder=label(r);org.setAttribute("aria-label",label(r))}));
 form.addEventListener("change",()=>{err.textContent=""});
 form.addEventListener("submit",async e=>{
 e.preventDefault();
 if(hp.value)return;
 const role=form.querySelector("input[name=role]:checked");
-const val=email.value.trim();
+const val=email.value.trim(),name=org.value.trim();
 if(!role){return fail("Please choose how you would like to join.",form.querySelector("input[name=role]"))}
+if(needsName(role)&&!name){return fail(isCand(role)?"Please enter your name.":"Please enter your name or company name.",org)}
 if(!val){return fail("Please enter your e-mail address.",email)}
 if(!validEmail(val)){return fail("Please enter a valid e-mail address, e.g. name@example.com.",email)}
 if(!gdpr.checked){return fail("Please confirm your consent to the processing of personal data.",gdpr)}
 err.textContent="";btn.disabled=true;btn.textContent="Sending…";
 try{
 const res=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({
-_subject:"[grvvity] New signup – "+role.value+": "+val,
+_subject:"[grvvity] New signup – "+role.value+": "+(needsName(role)?name+" <"+val+">":val),
 _template:"table",_captcha:"false",
 "Signup type":role.value,
+[isCand(role)?"Name":"Name / company"]:name,
 "E-mail":val,
 "GDPR consent":"Given on "+new Date().toISOString()+" (controller: Inferea, s. r. o.)",
 "Page":location.href
