@@ -54,16 +54,59 @@ h1{font:500 clamp(2.2rem,6vw,4.8rem)/1.04 var(--display);letter-spacing:-.04em;m
 footer{padding-bottom:clamp(20px,3vw,32px);color:var(--mist);font-size:.875rem}
 footer .wrap{display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}
 
+/* signup */
+.signup{border-top:1px solid var(--line);padding-top:clamp(24px,4vw,40px);display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,64px);align-items:start}
+.signup h2{margin:0 0 .6em;font:500 clamp(1.35rem,3vw,2.35rem)/1.14 var(--display);letter-spacing:-.03em;text-wrap:balance}
+.signup .intro{margin:0;max-width:34ch;color:var(--mist);font-size:clamp(1rem,1.3vw,1.125rem)}
+.signup form{display:grid;gap:18px;margin:0}
+.signup fieldset{border:0;margin:0;padding:0;min-width:0}
+.signup legend{padding:0;margin:0 0 10px;font-size:.875rem;color:var(--mist)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{position:relative;display:block;cursor:pointer}
+.opt.wide{grid-column:1/-1}
+.opt input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.opt .box{display:block;height:100%;padding:16px 18px 18px;border:1px solid var(--line);border-radius:14px;transition:border-color .2s,background .2s}
+.opt:hover .box{border-color:rgba(255,255,255,.4)}
+.opt input:checked + .box{border-color:var(--ink);background:rgba(255,255,255,.06)}
+.opt input:focus-visible + .box{outline:2px solid var(--ink);outline-offset:3px}
+.opt .t{display:flex;align-items:center;gap:10px;font:500 .95rem/1.2 var(--display);letter-spacing:-.02em;margin-bottom:8px}
+.opt .t::before{content:"";flex:none;width:14px;height:14px;border-radius:50%;border:1.5px solid var(--mist);transition:all .2s}
+.opt input:checked + .box .t::before{border-color:var(--ink);background:radial-gradient(circle,var(--bg) 0 3px,var(--ink) 3.5px)}
+.opt .d{display:block;color:var(--mist);font-size:.9375rem;line-height:1.5}
+.row{display:flex;gap:10px}
+.row input[type=email]{flex:1;min-width:0;height:52px;padding:0 20px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--ink);font:400 1rem var(--body);transition:border-color .2s}
+.row input[type=email]::placeholder{color:rgba(255,255,255,.4)}
+.row input[type=email]:hover{border-color:rgba(255,255,255,.4)}
+.row input[type=email]:focus{outline:none;border-color:var(--ink)}
+.row input[aria-invalid=true]{border-color:#ff8a80}
+.btn{flex:none;height:52px;padding:0 26px;border:0;border-radius:999px;background:var(--ink);color:var(--bg);font:500 .85rem var(--display);letter-spacing:-.01em;cursor:pointer;transition:opacity .2s}
+.btn:hover{opacity:.88}
+.btn[disabled]{opacity:.5;cursor:progress}
+.consent{display:grid;grid-template-columns:20px 1fr;gap:12px;align-items:start;cursor:pointer;font-size:.9375rem;line-height:1.5}
+.consent input{width:20px;height:20px;margin:2px 0 0;accent-color:#fff;cursor:pointer}
+.more{padding-left:32px;margin-top:-8px}
+.more summary{display:inline-block;cursor:pointer;font-size:.8125rem;color:rgba(255,255,255,.62);text-decoration:underline;text-underline-offset:3px;list-style:none}
+.more summary::-webkit-details-marker{display:none}
+.more summary:hover{color:var(--ink)}
+.more .legal{margin-top:10px}
+.legal{margin:0;font-size:.8125rem;line-height:1.55;color:rgba(255,255,255,.52)}
+.err{min-height:1.4em;margin:0;font-size:.875rem;color:#ff8a80}
+.ok{margin:0;padding:22px 24px;border:1px solid var(--line);border-radius:14px;font-size:1.05rem}
+.ok strong{display:block;font:500 1.1rem var(--display);letter-spacing:-.02em;margin-bottom:6px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+@media(max-width:760px){.signup{grid-template-columns:1fr}.opts{grid-template-columns:1fr}.row{flex-direction:column}.row input[type=email]{flex:none;width:100%}.btn{width:100%}}
+
 /* intro: logo from top, content gently from below */
 @keyframes in-down{from{opacity:0;transform:translateY(-72px)}35%{opacity:1}to{opacity:1;transform:none}}
 @keyframes in-up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-h1,.lead,.slider,footer .wrap{animation:in-up 1.2s cubic-bezier(.22,1,.36,1) both}
+h1,.lead,.slider,.signup,footer .wrap{animation:in-up 1.2s cubic-bezier(.22,1,.36,1) both}
 h1{animation-delay:.25s}
 .lead{animation-delay:.4s}
 .slider{animation-delay:.6s}
+.signup{animation-delay:.7s}
 footer .wrap{animation-delay:.8s}
 @media(max-width:760px){.slide{grid-template-columns:1fr}.arr{width:40px;height:40px}}
-@media(prefers-reduced-motion:reduce){.logo,.lt,h1,.lead,.slider,footer .wrap{animation:none}.drift,.undrift{animation:none}.slide,.slide.on{transition:none}.bar.on i::after{animation:none;transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.logo,.lt,h1,.lead,.slider,.signup,footer .wrap{animation:none}.drift,.undrift{animation:none}.slide,.slide.on{transition:none}.bar.on i::after{animation:none;transform:scaleX(1)}}
 </style>
 </head>
 <body>
@@ -145,6 +188,33 @@ footer .wrap{animation-delay:.8s}
 </div>
 </section>
 </div>
+
+<div class="wrap">
+<section class="signup" id="signup" aria-labelledby="signup-h">
+<div>
+<h2 id="signup-h">Be among the first</h2>
+<p class="intro">Sign up with your e-mail and be among the first to use the power of grvvity once we launch.</p>
+</div>
+<form id="signup-form" novalidate>
+<fieldset>
+<legend>I am joining as</legend>
+<div class="opts">
+<label class="opt"><input type="radio" name="role" value="Candidate (employee)"><span class="box"><span class="t">For candidates</span><span class="d">Looking for a job or thinking about a change? Just 30 seconds on grvvity can improve your career life.</span></span></label>
+<label class="opt"><input type="radio" name="role" value="Employer"><span class="box"><span class="t">For employers</span><span class="d">Work only with suitable candidates, for a fraction of the money and time of a usual hiring process.</span></span></label>
+<label class="opt wide"><input type="radio" name="role" value="Strategic partner / HR expert"><span class="box"><span class="t">For strategic partners &amp; HR experts</span><span class="d">Help us build a truly fair service that eliminates the problems of recruiting, significantly eases people’s career paths, and saves resources and the planet.</span></span></label>
+</div>
+</fieldset>
+<div class="row">
+<input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" aria-label="Your e-mail address" maxlength="254" required>
+<button class="btn" type="submit">Notify me</button>
+</div>
+<label class="consent"><input type="checkbox" id="gdpr" name="gdpr"><span>I consent to the processing of my personal data (GDPR).</span></label>
+<details class="more"><summary>Read the full consent</summary><p class="legal">Inferea, s. r. o. (the controller) will process my e-mail address and the selected role (candidate / employer / strategic partner or HR expert) solely to notify me about the launch of grvvity and to send me related information, in accordance with Regulation (EU) 2016/679 (GDPR). Consent is voluntary and I can withdraw it at any time by contacting the controller, without affecting the lawfulness of processing carried out before withdrawal. The data will be kept until I withdraw consent or until the purpose is fulfilled, and will not be sold to third parties. I have the right of access, rectification and erasure, and the right to lodge a complaint with a supervisory authority. Submissions are delivered by e-mail through the form service provider FormSubmit.</p></details>
+<div class="hp" aria-hidden="true"><label>Leave empty<input type="text" id="hp" tabindex="-1" autocomplete="off"></label></div>
+<p class="err" id="err" role="alert" aria-live="assertive"></p>
+</form>
+</section>
+</div>
 </main>
 
 <footer>
@@ -173,6 +243,49 @@ slider.addEventListener('pointerdown',function(e){x0=e.clientX;});
 slider.addEventListener('pointerup',function(e){if(x0!==null&&Math.abs(e.clientX-x0)>48)go(cur+(e.clientX<x0?1:-1));x0=null;});
 if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){var o=document.querySelector('.orbit svg');if(o&&o.pauseAnimations)o.pauseAnimations();}
 go(0);
+})();
+</script>
+<script>
+(()=>{
+const form=document.getElementById("signup-form");
+if(!form)return;
+const email=document.getElementById("email"),gdpr=document.getElementById("gdpr"),err=document.getElementById("err"),hp=document.getElementById("hp");
+const btn=form.querySelector(".btn");
+const ENDPOINT="https://formsubmit.co/ajax/milanferencik@gmail.com";
+const RE=/^[A-Za-z0-9.!#$%&'*+\/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/;
+const validEmail=v=>v.length<=254&&RE.test(v)&&!v.includes("..")&&!v.startsWith(".")&&!v.split("@")[0].endsWith(".");
+const fail=(m,el)=>{err.textContent=m;email.setAttribute("aria-invalid",el===email?"true":"false");if(el)el.focus()};
+email.addEventListener("input",()=>{email.removeAttribute("aria-invalid");err.textContent=""});
+form.addEventListener("change",()=>{err.textContent=""});
+form.addEventListener("submit",async e=>{
+e.preventDefault();
+if(hp.value)return;
+const role=form.querySelector("input[name=role]:checked");
+const val=email.value.trim();
+if(!role){return fail("Please choose how you would like to join.",form.querySelector("input[name=role]"))}
+if(!val){return fail("Please enter your e-mail address.",email)}
+if(!validEmail(val)){return fail("Please enter a valid e-mail address, e.g. name@example.com.",email)}
+if(!gdpr.checked){return fail("Please confirm your consent to the processing of personal data.",gdpr)}
+err.textContent="";btn.disabled=true;btn.textContent="Sending…";
+try{
+const res=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({
+_subject:"[grvvity] New signup – "+role.value+": "+val,
+_template:"table",_captcha:"false",
+"Signup type":role.value,
+"E-mail":val,
+"GDPR consent":"Given on "+new Date().toISOString()+" (controller: Inferea, s. r. o.)",
+"Page":location.href
+})});
+const data=await res.json().catch(()=>({}));
+if(!res.ok||data.success===false||data.success==="false")throw new Error("send");
+const ok=document.createElement("p");ok.className="ok";ok.setAttribute("role","status");
+ok.innerHTML="<strong>You’re on the list.</strong>Thank you – we’ll let you know as soon as grvvity launches.";
+form.replaceWith(ok);
+}catch(_){
+btn.disabled=false;btn.textContent="Notify me";
+fail("Something went wrong while sending. Please try again in a moment.");
+}
+});
 })();
 </script>
 </body>
