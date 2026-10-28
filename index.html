@@ -251,7 +251,7 @@ const form=document.getElementById("signup-form");
 if(!form)return;
 const email=document.getElementById("email"),gdpr=document.getElementById("gdpr"),err=document.getElementById("err"),hp=document.getElementById("hp");
 const btn=form.querySelector(".btn");
-const ENDPOINT="https://formsubmit.co/ajax/milanferencik@gmail.com";
+const ENDPOINT="https://formsubmit.co/ajax/milanferencik91@gmail.com";
 const RE=/^[A-Za-z0-9.!#$%&'*+\/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/;
 const validEmail=v=>v.length<=254&&RE.test(v)&&!v.includes("..")&&!v.startsWith(".")&&!v.split("@")[0].endsWith(".");
 const fail=(m,el)=>{err.textContent=m;email.setAttribute("aria-invalid",el===email?"true":"false");if(el)el.focus()};
@@ -277,11 +277,11 @@ _template:"table",_captcha:"false",
 "Page":location.href
 })});
 const data=await res.json().catch(()=>({}));
-if(!res.ok||data.success===false||data.success==="false")throw new Error("send");
+if(!res.ok||data.success===false||data.success==="false"){console.error("FormSubmit:",res.status,data);throw new Error("send")}
 const ok=document.createElement("p");ok.className="ok";ok.setAttribute("role","status");
 ok.innerHTML="<strong>You’re on the list.</strong>Thank you – we’ll let you know as soon as grvvity launches.";
 form.replaceWith(ok);
-}catch(_){
+}catch(e){console.error("Signup failed:",e);
 btn.disabled=false;btn.textContent="Notify me";
 fail("Something went wrong while sending. Please try again in a moment.");
 }
