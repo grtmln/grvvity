@@ -127,21 +127,17 @@ footer .wrap{animation-delay:.8s}
 </style>
 </head>
 <body>
+<!-- orbit-intro -->
 <div class="orbit" aria-hidden="true">
 <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
-<defs>
-<path id="orb" d="M-540 0 a540 210 0 1 0 1080 0 a540 210 0 1 0 -1080 0"/>
-<mask id="gap" maskUnits="userSpaceOnUse" x="-700" y="-300" width="1400" height="600">
-<rect x="-700" y="-300" width="1400" height="600" fill="#fff"/>
-<circle r="27" fill="#000"><animateMotion dur="36s" repeatCount="indefinite"><mpath href="#orb"/></animateMotion></circle>
-</mask>
-</defs>
-<g transform="translate(600 400) rotate(-24)">
-<ellipse rx="540" ry="210" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="18" mask="url(#gap)"/>
-<circle r="19" fill="#fff" fill-opacity=".2"><animateMotion dur="36s" repeatCount="indefinite"><mpath href="#orb"/></animateMotion></circle>
+<defs><mask id="gap" maskUnits="userSpaceOnUse" x="-700" y="-300" width="1400" height="600"><rect x="-700" y="-300" width="1400" height="600" fill="#fff"/><circle id="ogap" r="0" fill="#000"/></mask></defs>
+<g id="og" transform="translate(600 400) rotate(-24)">
+<path id="oring" d="M-540 0 a540 210 0 1 0 1080 0 a540 210 0 1 0 -1080 0" pathLength="1000" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="18" stroke-dasharray="1000 1000" stroke-dashoffset="1000" mask="url(#gap)"/>
+<circle id="odot" r="19" fill="#fff" fill-opacity=".2" opacity="0"/>
 </g>
 </svg>
 </div>
+<noscript><style>#oring{stroke-dashoffset:0!important}</style></noscript>
 
 <header>
 <div class="wrap hdr"><span class="logo" role="img" aria-label="grvvity"><svg viewBox="300 255 1955 357" width="1955" height="357" aria-hidden="true" focusable="false"><defs><mask id="ring-cut" maskUnits="userSpaceOnUse" x="-1000" y="-8000" width="8000" height="16000"><rect x="0" y="-8000" width="7000" height="16000" fill="#fff"/><ellipse rx="236" ry="149" transform="rotate(-24)" fill="#000"/></mask></defs><g transform="translate(533 434)"><g class="drift"><ellipse rx="205" ry="118" transform="rotate(-24)" fill="none" stroke="currentColor" stroke-width="62"/></g><g class="drift" mask="url(#ring-cut)"><g class="undrift"><g transform="translate(-533 -434)" fill="currentColor"><g class="lt" style="animation-delay:.83s"><path transform="translate(5.4 0)" fill-rule="evenodd" d="M904.9 384 H974.6 A33.6 31.5 0 0 1 1008.2 415.5 V384 H1073.8 V563.9 A35.8 33.5 0 0 1 1038 597.4 H853.3 L870.6 558.7 H1008.2 V544.5 H904.9 A52.9 54.2 0 0 1 852 490.3 V436.1 A52.9 52.1 0 0 1 904.9 384 Z M927.9 433 H997.9 A10.3 10.3 0 0 1 1008.2 443.3 V484.7 A10.3 10.3 0 0 1 997.9 495 H927.9 A10.3 10.3 0 0 1 917.6 484.7 V443.3 A10.3 10.3 0 0 1 927.9 433 Z"/></g><g class="lt" style="animation-delay:.775s"><path transform="translate(-12.6 0)" d="M1107 551 V434 A50 50 0 0 1 1157 384 H1274 V433 H1209 A36.4 36 0 0 0 1172.6 469 V551 Z"/></g><g class="lt" style="animation-delay:.72s"><path id="v" transform="translate(1276.9 0)" d="M0 384 H71.4 L124.9 508.5 L178.5 384 H249.9 L189.5 524.4 Q178.1 551 146.7 551 H103.2 Q71.8 551 60.4 524.4 Z"/></g><g class="lt" style="animation-delay:.665s"><use href="#v" x="265.1"/></g><g class="lt" style="animation-delay:.61s"><g transform="translate(9.5 0)"><path d="M1798 338 H1863.6 V346 A28 28 0 0 1 1835.6 374 H1798 Z"/><rect x="1798" y="384" width="65.6" height="167"/></g></g><g class="lt" style="animation-delay:.555s"><path transform="translate(18.5 0)" d="M1870 353.6 H1935.6 V384 H1967.6 V428.7 H1935.6 V492.6 Q1935.6 500.6 1943.6 500.6 H1998.1 L2020 551 H1924 A54 54 0 0 1 1870 497 Z"/></g><g class="lt" style="animation-delay:.5s"><path d="M2001.3 384 H2072.7 L2122.4 508.5 L2172.2 384 H2243.6 L2163.3 569 Q2151.0 597.3 2122.6 597.3 H2084.5 L2103.1 551 H2073.1 Z"/></g></g></g></g></g></svg></span><div class="lang"><select id="lang" aria-label="Language" data-i18n-aria="lang_label"></select></div></div>
@@ -368,6 +364,36 @@ btn.disabled=false;btn.textContent=t("btn");
 fail(t("err_send"));
 }
 });
+})();
+</script>
+<script>
+/* orbit intro: the dot circles first and draws the ellipse behind it; then the ellipse stays and drifts gently, opposite to the logo */
+(function(){
+var og=document.getElementById('og'),ring=document.getElementById('oring'),dot=document.getElementById('odot'),gap=document.getElementById('ogap');
+if(!og||!ring)return;
+var RX=540,RY=210,N=1440,cum=[0],px=[],py=[],i;
+for(i=0;i<=N;i++){var phi=2*Math.PI*i/N;px[i]=RX*Math.cos(Math.PI-phi);py[i]=RY*Math.sin(Math.PI-phi);if(i>0)cum[i]=cum[i-1]+Math.hypot(px[i]-px[i-1],py[i]-py[i-1]);}
+var P=cum[N];
+function pos(q){q=q-Math.floor(q);var tg=q*P,lo=0,hi=N,mid;while(hi-lo>1){mid=(lo+hi)>>1;if(cum[mid]<=tg)lo=mid;else hi=mid;}var f=(tg-cum[lo])/((cum[hi]-cum[lo])||1);return[px[lo]+(px[hi]-px[lo])*f,py[lo]+(py[hi]-py[lo])*f];}
+var T=2,SPEED=1/36,B=1-T*SPEED,START=.2;
+function qAt(t){var s=Math.max(0,t-START),p=Math.min(1,s/T);return s*SPEED+B*(1-(1-p)*(1-p));}
+function ios(x){return .5-Math.cos(Math.PI*x)/2;}
+function draw(t,still){
+  var q=qAt(t),f=Math.min(1,q),a=pos(q);
+  ring.style.strokeDashoffset=String(1000*(1-f));
+  dot.setAttribute('cx',a[0]);dot.setAttribute('cy',a[1]);gap.setAttribute('cx',a[0]);gap.setAttribute('cy',a[1]);
+  var on=still?1:Math.min(1,Math.max(0,(t-START)/.15));
+  dot.setAttribute('opacity',on);gap.setAttribute('r',27*on);
+  var rr=0,dx=0,dy=0;
+  if(!still){
+    var ph=(t/5)%2,u=ios(ph<1?ph:2-ph),v=(u-.5)*2,k=ios(Math.min(1,Math.max(0,(t-START-T)/2)));
+    rr=-3*v*k;dx=-10*v*k;dy=(6*Math.sin(Math.PI*u)-3)*k;
+  }
+  og.setAttribute('transform','translate(600 400) rotate('+(-24+rr)+') translate('+dx+' '+dy+')');
+}
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){draw(START+T+1,true);return;}
+var t0=performance.now();
+(function loop(now){draw((now-t0)/1000,false);requestAnimationFrame(loop);})(t0);
 })();
 </script>
 </body>
