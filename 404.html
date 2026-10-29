@@ -54,6 +54,21 @@ h1{font:500 clamp(2.2rem,6vw,4.8rem)/1.04 var(--display);letter-spacing:-.04em;m
 footer{padding-bottom:clamp(20px,3vw,32px);color:var(--mist);font-size:.875rem}
 footer .wrap{display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}
 
+/* language switcher + rtl + scripts */
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.lang{flex:none;animation:in-down 1s cubic-bezier(.16,1,.3,1) .15s both}
+.lang select{appearance:none;-webkit-appearance:none;height:32px;max-width:min(60vw,200px);padding:0 22px 0 4px;border:0;border-radius:6px;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23ffffff' stroke-opacity='.55' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 4px center/10px;color:var(--mist);font:400 .8125rem var(--body);cursor:pointer;transition:color .2s;field-sizing:content;text-align:right;text-align-last:right}
+.lang select:hover{color:var(--ink)}
+.lang select:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.lang option{background:#1a1a1e;color:#fff}
+[dir=rtl] .lang select{padding:0 4px 0 22px;background-position:left 4px center;text-align:left;text-align-last:left}
+[dir=rtl] .arr svg{transform:scaleX(-1)}
+[dir=rtl] .bar i::after{transform-origin:right}
+.row input[type=email]{text-align:left}
+html.cs *{letter-spacing:normal!important}
+html.cs h1,html.cs .slide h2,html.cs .signup h2{line-height:1.3}
+html.cs .slide p,html.cs .lead,html.cs .signup .intro,html.cs .opt .d{line-height:1.7}
+
 /* signup */
 .signup{border-top:1px solid var(--line);padding-top:clamp(24px,4vw,40px);display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,64px);align-items:start}
 .signup h2{margin:0 0 .6em;font:500 clamp(1.35rem,3vw,2.35rem)/1.14 var(--display);letter-spacing:-.03em;text-wrap:balance}
@@ -86,7 +101,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:w
 .btn[disabled]{opacity:.5;cursor:progress}
 .consent{display:grid;grid-template-columns:20px 1fr;gap:12px;align-items:start;cursor:pointer;font-size:.9375rem;line-height:1.5}
 .consent input{width:20px;height:20px;margin:2px 0 0;accent-color:#fff;cursor:pointer}
-.more{padding-left:32px;margin-top:-8px}
+.more{padding-inline-start:32px;margin-top:-8px}
 .more summary{display:inline-block;cursor:pointer;font-size:.8125rem;color:rgba(255,255,255,.62);text-decoration:underline;text-underline-offset:3px;list-style:none}
 .more summary::-webkit-details-marker{display:none}
 .more summary:hover{color:var(--ink)}
@@ -95,7 +110,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:w
 .err{min-height:1.4em;margin:0;font-size:.875rem;color:#ff8a80}
 .ok{margin:0;padding:22px 24px;border:1px solid var(--line);border-radius:14px;font-size:1.05rem}
 .ok strong{display:block;font:500 1.1rem var(--display);letter-spacing:-.02em;margin-bottom:6px}
-.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.hp{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;clip-path:inset(50%)}
 @media(max-width:760px){.signup{grid-template-columns:1fr}.opts{grid-template-columns:1fr}.row{flex-direction:column}.row input[type=email]{flex:none;width:100%}.btn{width:100%}}
 
 /* 404 */
@@ -115,42 +130,121 @@ h1{animation-delay:.25s}
 .signup{animation-delay:.7s}
 footer .wrap{animation-delay:.8s}
 @media(max-width:760px){.slide{grid-template-columns:1fr}.arr{width:40px;height:40px}}
-@media(prefers-reduced-motion:reduce){.logo,.lt,h1,.lead,.slider,.signup,footer .wrap{animation:none}.drift,.undrift{animation:none}.slide,.slide.on{transition:none}.bar.on i::after{animation:none;transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.logo,.lang,.lt,h1,.lead,.slider,.signup,footer .wrap{animation:none}.drift,.undrift{animation:none}.slide,.slide.on{transition:none}.bar.on i::after{animation:none;transform:scaleX(1)}}
 </style>
 </head>
 <body>
+<!-- orbit-intro -->
 <div class="orbit" aria-hidden="true">
 <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
-<defs>
-<path id="orb" d="M-540 0 a540 210 0 1 0 1080 0 a540 210 0 1 0 -1080 0"/>
-<mask id="gap" maskUnits="userSpaceOnUse" x="-700" y="-300" width="1400" height="600">
-<rect x="-700" y="-300" width="1400" height="600" fill="#fff"/>
-<circle r="27" fill="#000"><animateMotion dur="36s" repeatCount="indefinite"><mpath href="#orb"/></animateMotion></circle>
-</mask>
-</defs>
-<g transform="translate(600 400) rotate(-24)">
-<ellipse rx="540" ry="210" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="18" mask="url(#gap)"/>
-<circle r="19" fill="#fff" fill-opacity=".2"><animateMotion dur="36s" repeatCount="indefinite"><mpath href="#orb"/></animateMotion></circle>
+<defs><mask id="gap" maskUnits="userSpaceOnUse" x="-700" y="-300" width="1400" height="600"><rect x="-700" y="-300" width="1400" height="600" fill="#fff"/><circle id="ogap0" cx="-540" cy="0" r="0" fill="#000"/><circle id="ogap" r="0" fill="#000"/></mask></defs>
+<g id="og" transform="translate(600 400) rotate(-24)">
+<path id="oring" d="M-540 0 a540 210 0 1 0 1080 0 a540 210 0 1 0 -1080 0z" pathLength="1000" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="18" stroke-dasharray="1000 1000" stroke-dashoffset="1000" mask="url(#gap)"/>
+<circle id="odot" r="19" fill="#fff" fill-opacity=".2" opacity="0"/>
 </g>
 </svg>
 </div>
+<noscript><style>#oring{stroke-dashoffset:0!important}</style></noscript>
 
 <header>
-<div class="wrap"><span class="logo" role="img" aria-label="grvvity"><svg viewBox="300 255 1955 357" width="1955" height="357" aria-hidden="true" focusable="false"><defs><mask id="ring-cut" maskUnits="userSpaceOnUse" x="-1000" y="-8000" width="8000" height="16000"><rect x="0" y="-8000" width="7000" height="16000" fill="#fff"/><ellipse rx="236" ry="149" transform="rotate(-24)" fill="#000"/></mask></defs><g transform="translate(533 434)"><g class="drift"><ellipse rx="205" ry="118" transform="rotate(-24)" fill="none" stroke="currentColor" stroke-width="62"/></g><g class="drift" mask="url(#ring-cut)"><g class="undrift"><g transform="translate(-533 -434)" fill="currentColor"><g class="lt" style="animation-delay:.83s"><path transform="translate(5.4 0)" fill-rule="evenodd" d="M904.9 384 H974.6 A33.6 31.5 0 0 1 1008.2 415.5 V384 H1073.8 V563.9 A35.8 33.5 0 0 1 1038 597.4 H853.3 L870.6 558.7 H1008.2 V544.5 H904.9 A52.9 54.2 0 0 1 852 490.3 V436.1 A52.9 52.1 0 0 1 904.9 384 Z M927.9 433 H997.9 A10.3 10.3 0 0 1 1008.2 443.3 V484.7 A10.3 10.3 0 0 1 997.9 495 H927.9 A10.3 10.3 0 0 1 917.6 484.7 V443.3 A10.3 10.3 0 0 1 927.9 433 Z"/></g><g class="lt" style="animation-delay:.775s"><path transform="translate(-12.6 0)" d="M1107 551 V434 A50 50 0 0 1 1157 384 H1274 V433 H1209 A36.4 36 0 0 0 1172.6 469 V551 Z"/></g><g class="lt" style="animation-delay:.72s"><path id="v" transform="translate(1276.9 0)" d="M0 384 H71.4 L124.9 508.5 L178.5 384 H249.9 L189.5 524.4 Q178.1 551 146.7 551 H103.2 Q71.8 551 60.4 524.4 Z"/></g><g class="lt" style="animation-delay:.665s"><use href="#v" x="265.1"/></g><g class="lt" style="animation-delay:.61s"><g transform="translate(9.5 0)"><path d="M1798 338 H1863.6 V346 A28 28 0 0 1 1835.6 374 H1798 Z"/><rect x="1798" y="384" width="65.6" height="167"/></g></g><g class="lt" style="animation-delay:.555s"><path transform="translate(18.5 0)" d="M1870 353.6 H1935.6 V384 H1967.6 V428.7 H1935.6 V492.6 Q1935.6 500.6 1943.6 500.6 H1998.1 L2020 551 H1924 A54 54 0 0 1 1870 497 Z"/></g><g class="lt" style="animation-delay:.5s"><path d="M2001.3 384 H2072.7 L2122.4 508.5 L2172.2 384 H2243.6 L2163.3 569 Q2151.0 597.3 2122.6 597.3 H2084.5 L2103.1 551 H2073.1 Z"/></g></g></g></g></g></svg></span></div>
+<div class="wrap hdr"><span class="logo" role="img" aria-label="grvvity"><svg viewBox="300 255 1955 357" width="1955" height="357" aria-hidden="true" focusable="false"><defs><mask id="ring-cut" maskUnits="userSpaceOnUse" x="-1000" y="-8000" width="8000" height="16000"><rect x="0" y="-8000" width="7000" height="16000" fill="#fff"/><ellipse rx="236" ry="149" transform="rotate(-24)" fill="#000"/></mask></defs><g transform="translate(533 434)"><g class="drift"><ellipse rx="205" ry="118" transform="rotate(-24)" fill="none" stroke="currentColor" stroke-width="62"/></g><g class="drift" mask="url(#ring-cut)"><g class="undrift"><g transform="translate(-533 -434)" fill="currentColor"><g class="lt" style="animation-delay:.83s"><path transform="translate(5.4 0)" fill-rule="evenodd" d="M904.9 384 H974.6 A33.6 31.5 0 0 1 1008.2 415.5 V384 H1073.8 V563.9 A35.8 33.5 0 0 1 1038 597.4 H853.3 L870.6 558.7 H1008.2 V544.5 H904.9 A52.9 54.2 0 0 1 852 490.3 V436.1 A52.9 52.1 0 0 1 904.9 384 Z M927.9 433 H997.9 A10.3 10.3 0 0 1 1008.2 443.3 V484.7 A10.3 10.3 0 0 1 997.9 495 H927.9 A10.3 10.3 0 0 1 917.6 484.7 V443.3 A10.3 10.3 0 0 1 927.9 433 Z"/></g><g class="lt" style="animation-delay:.775s"><path transform="translate(-12.6 0)" d="M1107 551 V434 A50 50 0 0 1 1157 384 H1274 V433 H1209 A36.4 36 0 0 0 1172.6 469 V551 Z"/></g><g class="lt" style="animation-delay:.72s"><path id="v" transform="translate(1276.9 0)" d="M0 384 H71.4 L124.9 508.5 L178.5 384 H249.9 L189.5 524.4 Q178.1 551 146.7 551 H103.2 Q71.8 551 60.4 524.4 Z"/></g><g class="lt" style="animation-delay:.665s"><use href="#v" x="265.1"/></g><g class="lt" style="animation-delay:.61s"><g transform="translate(9.5 0)"><path d="M1798 338 H1863.6 V346 A28 28 0 0 1 1835.6 374 H1798 Z"/><rect x="1798" y="384" width="65.6" height="167"/></g></g><g class="lt" style="animation-delay:.555s"><path transform="translate(18.5 0)" d="M1870 353.6 H1935.6 V384 H1967.6 V428.7 H1935.6 V492.6 Q1935.6 500.6 1943.6 500.6 H1998.1 L2020 551 H1924 A54 54 0 0 1 1870 497 Z"/></g><g class="lt" style="animation-delay:.5s"><path d="M2001.3 384 H2072.7 L2122.4 508.5 L2172.2 384 H2243.6 L2163.3 569 Q2151.0 597.3 2122.6 597.3 H2084.5 L2103.1 551 H2073.1 Z"/></g></g></g></g></g></svg></span><div class="lang"><select id="lang" aria-label="Language" data-i18n-aria="lang_label"></select></div></div>
 </header>
 
 <main class="nf">
 <div class="wrap">
 <p class="code" aria-hidden="true">404</p>
-<h1>Out of orbit</h1>
-<p class="lead">The page you’re looking for drifted away or never existed. Let’s get you back.</p>
-<a class="btn home" href="/">Back to home</a>
+<h1 data-i18n="nf_h">Out of orbit</h1>
+<p class="lead" data-i18n="nf_p">The page you’re looking for drifted away or never existed. Let’s get you back.</p>
+<a class="btn home" href="/" data-i18n="nf_b">Back to home</a>
 </div>
 </main>
 
 <footer>
-<div class="wrap"><span>aligning human forces</span><span>© 2026 grvvity</span></div>
+<div class="wrap"><span data-i18n="tag">aligning human forces</span><span>© 2026 grvvity</span></div>
 </footer>
 
+<script>
+(function(){
+var I={"en":{"lang_name":"English","tag":"aligning human forces","lang_label":"Language","nf_h":"Out of orbit","nf_p":"The page you’re looking for drifted away or never existed. Let’s get you back.","nf_b":"Back to home","nf_title":"404 — page not found | grvvity"},"sk":{"lang_name":"Slovak","tag":"zosúlaďujeme ľudské sily","lang_label":"Jazyk","nf_h":"Mimo orbity","nf_p":"Stránka, ktorú hľadáte, sa vzdialila alebo nikdy neexistovala. Vráťme vás späť.","nf_b":"Späť na úvod","nf_title":"404 — stránka sa nenašla | grvvity"},"es":{"lang_name":"Spanish","tag":"alineando fuerzas humanas","lang_label":"Idioma","nf_h":"Fuera de órbita","nf_p":"La página que buscas se ha alejado a la deriva o nunca existió. Te llevamos de vuelta.","nf_b":"Volver al inicio","nf_title":"404 — página no encontrada | grvvity"},"fr":{"lang_name":"French","tag":"aligner les forces humaines","lang_label":"Langue","nf_h":"Hors orbite","nf_p":"La page que vous cherchez a dérivé ou n’a jamais existé. Revenons à l’accueil.","nf_b":"Retour à l’accueil","nf_title":"404 — page introuvable | grvvity"},"de":{"lang_name":"German","tag":"menschliche Kräfte in Einklang bringen","lang_label":"Sprache","nf_h":"Aus der Umlaufbahn geraten","nf_p":"Die gesuchte Seite ist davongedriftet oder hat nie existiert. Wir bringen dich zurück.","nf_b":"Zurück zur Startseite","nf_title":"404 — Seite nicht gefunden | grvvity"},"pt":{"lang_name":"Portuguese","tag":"alinhando forças humanas","lang_label":"Idioma","nf_h":"Fora de órbita","nf_p":"A página que você procura saiu à deriva ou nunca existiu. Vamos levar você de volta.","nf_b":"Voltar ao início","nf_title":"404 — página não encontrada | grvvity"},"id":{"lang_name":"Indonesian","tag":"menyelaraskan kekuatan manusia","lang_label":"Bahasa","nf_h":"Keluar orbit","nf_p":"Halaman yang Anda cari telah hanyut atau tidak pernah ada. Mari kembali.","nf_b":"Kembali ke beranda","nf_title":"404 — halaman tidak ditemukan | grvvity"},"ja":{"lang_name":"Japanese","tag":"人の力を調和させる","lang_label":"言語","nf_h":"軌道から外れました","nf_p":"お探しのページは漂流してしまったか、存在しません。ホームにご案内します。","nf_b":"ホームに戻る","nf_title":"404 — ページが見つかりません | grvvity"},"zh":{"lang_name":"Chinese (Mandarin)","tag":"凝聚人的力量","lang_label":"语言","nf_h":"偏离轨道","nf_p":"您要找的页面已飘走，或从未存在过。我们带您回去。","nf_b":"返回首页","nf_title":"404 — 页面未找到 | grvvity"},"hi":{"lang_name":"Hindi","tag":"मानवीय शक्तियों को सही दिशा में जोड़ना","lang_label":"भाषा","nf_h":"कक्षा से बाहर","nf_p":"आप जिस पेज को ढूँढ रहे हैं, वह भटक गया है या कभी था ही नहीं। चलिए, आपको वापस ले चलें।","nf_b":"होम पर वापस जाएँ","nf_title":"404 — पेज नहीं मिला | grvvity"},"bn":{"lang_name":"Bengali","tag":"মানবিক শক্তিকে একসূত্রে বাঁধা","lang_label":"ভাষা","nf_h":"কক্ষপথের বাইরে","nf_p":"আপনি যে পাতাটি খুঁজছেন সেটি ভেসে গেছে বা কখনও ছিলই না। চলুন, আপনাকে ফিরিয়ে নিয়ে যাই।","nf_b":"হোমে ফিরে যান","nf_title":"404 — পাতা পাওয়া যায়নি | grvvity"},"mr":{"lang_name":"Marathi","tag":"मानवी शक्तींना एकत्र जोडणे","lang_label":"भाषा","nf_h":"कक्षेबाहेर","nf_p":"तुम्ही शोधत असलेले पान भरकटले आहे किंवा कधी अस्तित्वातच नव्हते. चला, तुम्हाला परत नेऊ.","nf_b":"मुख्यपृष्ठावर परत जा","nf_title":"404 — पान सापडले नाही | grvvity"},"te":{"lang_name":"Telugu","tag":"మానవ శక్తులను ఏకం చేయడం","lang_label":"భాష","nf_h":"కక్ష్య నుండి తప్పిపోయింది","nf_p":"మీరు వెతుకుతున్న పేజీ కొట్టుకుపోయింది లేదా ఎప్పుడూ లేదు. మిమ్మల్ని తిరిగి తీసుకెళ్దాం.","nf_b":"హోమ్‌కు తిరిగి వెళ్లండి","nf_title":"404 — పేజీ కనుగొనబడలేదు | grvvity"},"ar":{"lang_name":"Arabic","tag":"مواءمة القوى البشرية","lang_label":"اللغة","nf_h":"خارج المدار","nf_p":"الصفحة التي تبحث عنها انجرفت بعيدًا أو لم تكن موجودة أصلًا. لنُعدك إلى الصفحة الرئيسية.","nf_b":"العودة إلى الرئيسية","nf_title":"404 — الصفحة غير موجودة | grvvity"},"ur":{"lang_name":"Urdu","tag":"انسانی قوتوں کو ہم آہنگ کرنا","lang_label":"زبان","nf_h":"مدار سے باہر","nf_p":"جو صفحہ آپ تلاش کر رہے ہیں وہ بہہ گیا ہے یا کبھی تھا ہی نہیں۔ آئیے آپ کو واپس لے چلیں۔","nf_b":"ہوم پر واپس جائیں","nf_title":"404 — صفحہ نہیں ملا | grvvity"}};
+var ORDER=["en", "sk", "es", "fr", "de", "pt", "id", "ja", "zh", "hi", "bn", "mr", "te", "ar", "ur"];
+var TAG={en:'en',sk:'sk',es:'es',fr:'fr',de:'de',pt:'pt',id:'id',ja:'ja',zh:'zh-Hans',hi:'hi',bn:'bn',mr:'mr',te:'te',ar:'ar',ur:'ur'};
+var RTL={ar:1,ur:1}, CS={ja:1,zh:1,hi:1,bn:1,mr:1,te:1,ar:1,ur:1};
+var FONT={ja:['Noto Sans JP','Noto+Sans+JP'],zh:['Noto Sans SC','Noto+Sans+SC'],hi:['Noto Sans Devanagari','Noto+Sans+Devanagari'],mr:['Noto Sans Devanagari','Noto+Sans+Devanagari'],bn:['Noto Sans Bengali','Noto+Sans+Bengali'],te:['Noto Sans Telugu','Noto+Sans+Telugu'],ar:['Noto Sans Arabic','Noto+Sans+Arabic'],ur:['Noto Naskh Arabic','Noto+Naskh+Arabic']};
+var cur='en';
+function T(k){var L=I[cur];return (L&&L[k]!==undefined)?L[k]:I.en[k];}
+window.t=T;
+function each(s,f){Array.prototype.forEach.call(document.querySelectorAll(s),f);}
+function loadFont(code){
+  var f=FONT[code],root=document.documentElement.style;
+  if(!f){root.removeProperty('--display');root.removeProperty('--body');return;}
+  var id='gv-font-'+code;
+  if(!document.getElementById(id)){var l=document.createElement('link');l.id=id;l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+f[1]+':wght@400;500&display=swap';document.head.appendChild(l);}
+  root.setProperty('--display','"'+f[0]+'","Unbounded",system-ui,sans-serif');
+  root.setProperty('--body','"'+f[0]+'",system-ui,sans-serif');
+}
+function apply(code){
+  if(!I[code])code='en'; cur=code;
+  var de=document.documentElement; de.lang=TAG[code]; de.dir=RTL[code]?'rtl':'ltr'; de.classList.toggle('cs',!!CS[code]);
+  loadFont(code);
+  document.title=T('nf_title');
+  
+  each('[data-i18n]',function(e){e.textContent=T(e.getAttribute('data-i18n'));});
+  each('[data-i18n-ph]',function(e){e.setAttribute('placeholder',T(e.getAttribute('data-i18n-ph')));});
+  each('[data-i18n-aria]',function(e){e.setAttribute('aria-label',T(e.getAttribute('data-i18n-aria')));});
+  each('#benefits .slide',function(e,i){e.setAttribute('aria-label',T('slide_aria').replace('{n}',i+1).replace('{t}',8));});
+  each('#benefits .bar',function(e,i){e.setAttribute('aria-label',T('bar_aria').replace('{n}',i+1));});
+  var sel=document.getElementById('lang'); if(sel)sel.value=code;
+  var er=document.getElementById('err'); if(er)er.textContent='';
+  if(window.__refreshForm)window.__refreshForm();
+  var ok=document.querySelector('.ok'); if(ok&&window.__fillOk)window.__fillOk(ok);
+}
+function pick(){
+  var q=(location.search.match(/[?&]lang=([a-z]{2})/)||[])[1]; if(q&&I[q])return q;
+  try{var s=localStorage.getItem('gv-lang'); if(s&&I[s])return s;}catch(e){}
+  var nl=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'en'];
+  for(var i=0;i<nl.length;i++){var c=String(nl[i]).toLowerCase().slice(0,2); if(I[c])return c;}
+  return 'en';
+}
+var sel=document.getElementById('lang');
+if(sel){
+  ORDER.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=I[c].lang_name;sel.appendChild(o);});
+  sel.addEventListener('change',function(){apply(sel.value);try{localStorage.setItem('gv-lang',sel.value);}catch(e){}});
+}
+apply(pick());
+})();
+
+</script>
+<script>
+/* orbit intro: the dot circles first and draws the ellipse behind it; then the ellipse stays and drifts gently, opposite to the logo */
+(function(){
+var og=document.getElementById('og'),ring=document.getElementById('oring'),dot=document.getElementById('odot'),gap=document.getElementById('ogap'),gap0=document.getElementById('ogap0');
+if(!og||!ring)return;
+var RX=540,RY=210,N=1440,cum=[0],px=[],py=[],i;
+for(i=0;i<=N;i++){var phi=2*Math.PI*i/N;px[i]=RX*Math.cos(Math.PI-phi);py[i]=RY*Math.sin(Math.PI-phi);if(i>0)cum[i]=cum[i-1]+Math.hypot(px[i]-px[i-1],py[i]-py[i-1]);}
+var P=cum[N];
+function pos(q){q=q-Math.floor(q);var tg=q*P,lo=0,hi=N,mid;while(hi-lo>1){mid=(lo+hi)>>1;if(cum[mid]<=tg)lo=mid;else hi=mid;}var f=(tg-cum[lo])/((cum[hi]-cum[lo])||1);return[px[lo]+(px[hi]-px[lo])*f,py[lo]+(py[hi]-py[lo])*f];}
+var T=2,SPEED=1/36,B=1-T*SPEED,START=.2;
+function qAt(t){var s=Math.max(0,t-START),p=Math.min(1,s/T);return s*SPEED+B*(1-(1-p)*(1-p));}
+function ios(x){return .5-Math.cos(Math.PI*x)/2;}
+function draw(t,still){
+  var q=qAt(t),f=Math.min(1,q),a=pos(q);
+  var done=q>=1;
+  ring.style.strokeDasharray=done?'none':'1000 1000';
+  ring.style.strokeDashoffset=done?'0':String(1000*(1-f));
+  dot.setAttribute('cx',a[0]);dot.setAttribute('cy',a[1]);gap.setAttribute('cx',a[0]);gap.setAttribute('cy',a[1]);
+  var on=still?1:Math.min(1,Math.max(0,(t-START)/.15));
+  dot.setAttribute('opacity',on);gap.setAttribute('r',27*on);gap0.setAttribute('r',done?0:27*on);
+  var rr=0,dx=0,dy=0;
+  if(!still){
+    var ph=(t/5)%2,u=ios(ph<1?ph:2-ph),v=(u-.5)*2,k=ios(Math.min(1,Math.max(0,(t-START-T)/2)));
+    rr=-3*v*k;dx=-10*v*k;dy=(6*Math.sin(Math.PI*u)-3)*k;
+  }
+  og.setAttribute('transform','translate(600 400) rotate('+(-24+rr)+') translate('+dx+' '+dy+')');
+}
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){draw(START+T+1,true);return;}
+var t0=performance.now();
+(function loop(now){draw((now-t0)/1000,false);requestAnimationFrame(loop);})(t0);
+})();
+</script>
 </body>
 </html>
