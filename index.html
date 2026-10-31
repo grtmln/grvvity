@@ -414,8 +414,8 @@ function draw(t,still){
   ring.style.strokeDasharray=done?'none':'1000 1000';
   ring.style.strokeDashoffset=done?'0':String(1000*(1-f));
   dot.setAttribute('cx',a[0]);dot.setAttribute('cy',a[1]);gap.setAttribute('cx',a[0]);gap.setAttribute('cy',a[1]);
-  var on=still?1:Math.min(1,Math.max(0,(t-START)/.15));
-  dot.setAttribute('opacity',on);gap.setAttribute('r',27*on);gap0.setAttribute('r',done?0:27*on);
+  var on=still?1:Math.min(1,Math.max(0,(t-START)/.15)),g=(still||t>=START)?27:0;
+  dot.setAttribute('opacity',on);gap.setAttribute('r',g);gap0.setAttribute('r',done?0:g);
   og.setAttribute('transform','translate(600 400) rotate(-24)');
 }
 if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){draw(START+T+1,true);return;}
