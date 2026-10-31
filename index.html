@@ -159,12 +159,12 @@ footer .wrap{animation-delay:.8s}
 <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
 <defs><mask id="gap" maskUnits="userSpaceOnUse" x="-700" y="-300" width="1400" height="600"><rect x="-700" y="-300" width="1400" height="600" fill="#fff"/><circle id="ogap0" cx="-540" cy="0" r="0" fill="#000"/><circle id="ogap" r="0" fill="#000"/></mask></defs>
 <g id="og" transform="translate(600 400) rotate(-24)">
-<path id="oring" d="M-540 0 a540 210 0 1 0 1080 0 a540 210 0 1 0 -1080 0z" pathLength="1000" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="18" stroke-dasharray="1000 1000" stroke-dashoffset="1000" mask="url(#gap)"/>
+<path id="oring" style="visibility:hidden" d="M-540 0 a540 210 0 1 0 1080 0 a540 210 0 1 0 -1080 0z" pathLength="1000" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="18" stroke-dasharray="1000 1000" stroke-dashoffset="1000" mask="url(#gap)"/>
 <circle id="odot" r="19" fill="#fff" fill-opacity=".2" opacity="0"/>
 </g>
 </svg>
 </div>
-<noscript><style>#oring{stroke-dashoffset:0!important}</style></noscript>
+<noscript><style>#oring{stroke-dashoffset:0!important;visibility:visible!important}</style></noscript>
 
 <header>
 <div class="wrap hdr"><span class="logo" role="img" aria-label="grvvity"><svg viewBox="300 255 1955 357" width="1955" height="357" aria-hidden="true" focusable="false"><defs><mask id="ring-cut" maskUnits="userSpaceOnUse" x="-1000" y="-8000" width="8000" height="16000"><rect x="0" y="-8000" width="7000" height="16000" fill="#fff"/><ellipse rx="236" ry="149" transform="rotate(-24)" fill="#000"/></mask></defs><g transform="translate(533 434)"><g class="drift"><ellipse rx="205" ry="118" transform="rotate(-24)" fill="none" stroke="currentColor" stroke-width="62"/></g><g class="drift" mask="url(#ring-cut)"><g class="undrift"><g transform="translate(-533 -434)" fill="currentColor"><g class="lt" style="animation-delay:.83s"><path transform="translate(5.4 0)" fill-rule="evenodd" d="M904.9 384 H974.6 A33.6 31.5 0 0 1 1008.2 415.5 V384 H1073.8 V563.9 A35.8 33.5 0 0 1 1038 597.4 H853.3 L870.6 558.7 H1008.2 V544.5 H904.9 A52.9 54.2 0 0 1 852 490.3 V436.1 A52.9 52.1 0 0 1 904.9 384 Z M927.9 433 H997.9 A10.3 10.3 0 0 1 1008.2 443.3 V484.7 A10.3 10.3 0 0 1 997.9 495 H927.9 A10.3 10.3 0 0 1 917.6 484.7 V443.3 A10.3 10.3 0 0 1 927.9 433 Z"/></g><g class="lt" style="animation-delay:.775s"><path transform="translate(-12.6 0)" d="M1107 551 V434 A50 50 0 0 1 1157 384 H1274 V433 H1209 A36.4 36 0 0 0 1172.6 469 V551 Z"/></g><g class="lt" style="animation-delay:.72s"><path id="v" transform="translate(1276.9 0)" d="M0 384 H71.4 L124.9 508.5 L178.5 384 H249.9 L189.5 524.4 Q178.1 551 146.7 551 H103.2 Q71.8 551 60.4 524.4 Z"/></g><g class="lt" style="animation-delay:.665s"><use href="#v" x="265.1"/></g><g class="lt" style="animation-delay:.61s"><g transform="translate(9.5 0)"><path d="M1798 338 H1863.6 V346 A28 28 0 0 1 1835.6 374 H1798 Z"/><rect x="1798" y="384" width="65.6" height="167"/></g></g><g class="lt" style="animation-delay:.555s"><path transform="translate(18.5 0)" d="M1870 353.6 H1935.6 V384 H1967.6 V428.7 H1935.6 V492.6 Q1935.6 500.6 1943.6 500.6 H1998.1 L2020 551 H1924 A54 54 0 0 1 1870 497 Z"/></g><g class="lt" style="animation-delay:.5s"><path d="M2001.3 384 H2072.7 L2122.4 508.5 L2172.2 384 H2243.6 L2163.3 569 Q2151.0 597.3 2122.6 597.3 H2084.5 L2103.1 551 H2073.1 Z"/></g></g></g></g></g></svg></span><div class="lang"><button type="button" class="lang-btn" id="lang-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="lang-menu" aria-label="Language: English"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg><span id="lang-code">EN</span></button><div class="lang-menu" id="lang-menu" role="menu" hidden></div><select id="lang" aria-label="Language" data-i18n-aria="lang_label"></select></div></div>
@@ -411,6 +411,7 @@ function ios(x){return .5-Math.cos(Math.PI*x)/2;}
 function draw(t,still){
   var q=qAt(t),f=Math.min(1,q),a=pos(q);
   var done=q>=1;
+  ring.style.visibility=(f>0&&(still||t>=START))?'visible':'hidden';
   ring.style.strokeDasharray=done?'none':'1000 1000';
   ring.style.strokeDashoffset=done?'0':String(1000*(1-f));
   dot.setAttribute('cx',a[0]);dot.setAttribute('cy',a[1]);gap.setAttribute('cx',a[0]);gap.setAttribute('cy',a[1]);
