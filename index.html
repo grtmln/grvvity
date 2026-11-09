@@ -369,6 +369,9 @@ header::before{content:"";position:absolute;left:0;right:0;top:0;bottom:-34px;z-
 .logo svg{transition:opacity .6s ease}
 .sc header::before{opacity:1}
 .sc .logo svg{opacity:.3}
+.lang-btn{transition:opacity .6s ease,color .2s,background-color .2s,transform .15s}
+.sc .lang-btn{opacity:.3}
+.sc .lang-btn:hover,.sc .lang-btn:focus-visible,.sc .lang-btn[aria-expanded=true]{opacity:1}
 header{padding-bottom:12px;transition:padding .5s cubic-bezier(.22,1,.36,1),margin .5s cubic-bezier(.22,1,.36,1)}
 .sc header{padding-top:8px;padding-bottom:2px;margin-bottom:calc(clamp(20px,4vw,40px) - 8px + 10px)}
 .sc header::before{bottom:-18px}
