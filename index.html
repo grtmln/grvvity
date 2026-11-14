@@ -400,7 +400,7 @@ main{justify-content:flex-start;gap:clamp(48px,9vh,96px)}
 .orbit{transition:opacity 1s ease}.tf-on .orbit{opacity:0}
 @media(prefers-reduced-motion:reduce){.orbit{transition:none}}
 .tf{padding:clamp(16px,4vw,48px) 0}
-.tf-stage{position:relative;width:100%;height:clamp(480px,60vh,680px);-webkit-mask-image:linear-gradient(transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(transparent,#000 16%,#000 84%,transparent)}
+.tf-stage{position:relative;width:100%;height:clamp(480px,92vh,1200px);-webkit-mask-image:linear-gradient(transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(transparent,#000 16%,#000 84%,transparent)}
 .tf-stage canvas{display:block;width:100%;height:100%}
 .tf-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 </style>
@@ -607,7 +607,7 @@ main{justify-content:flex-start;gap:clamp(48px,9vh,96px)}
 </section>
 </div>
 <section class="tf" id="tf" lang="en" dir="ltr" aria-labelledby="tf-h">
-<h2 class="tf-sr" id="tf-h">Find and assess talent more easily. Now you are the architect of your own career journey.</h2>
+<h2 class="tf-sr" id="tf-h">Find and assess talent more easily. Now you are the architect of your own career journey. Better decisions for companies and candidates, the kind only a human can make.</h2>
 <div class="tf-stage"><canvas aria-hidden="true"></canvas></div>
 </section>
 </main>
@@ -853,7 +853,8 @@ upd();
 })();
 </script>
 <script>
-/* talent field: tech roles scroll upward and are cut by a hole; claim A (employers) runs round the circle, claim B (candidates) round the tilted ellipse (same -24deg tilt as logo and orbit) */
+/* talent field: roles scroll upward and dodge three brand shapes, each carrying its own claim:
+   circle (employers), orbit ellipse (candidates), logo ellipse (better decisions); tilt -24deg like the logo and the orbit */
 (function(){
 var host=document.getElementById('tf');if(!host)return;
 var stage=host.querySelector('.tf-stage'),cv=stage.querySelector('canvas'),ctx=cv.getContext('2d');
@@ -861,8 +862,14 @@ var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').mat
 /* background orbit ellipse fades out while this section is on screen */
 if('IntersectionObserver' in window)new IntersectionObserver(function(es){es.forEach(function(e){document.documentElement.classList.toggle('tf-on',e.isIntersecting);});},{threshold:.15}).observe(stage);
 var ROLES=['FULL-STACK DEVELOPER','FRONTEND DEVELOPER','BACKEND DEVELOPER','DEVOPS ENGINEER','DATA SCIENTIST','DATA ENGINEER','MACHINE LEARNING ENGINEER','AI ENGINEER','MOBILE DEVELOPER','CLOUD ARCHITECT','SECURITY ENGINEER','SITE RELIABILITY ENGINEER','QA ENGINEER','PLATFORM ENGINEER','EMBEDDED ENGINEER','GAME DEVELOPER','SOFTWARE ARCHITECT','TECH LEAD','ENGINEERING MANAGER','PRODUCT MANAGER','PRODUCT DESIGNER','UX RESEARCHER','BUSINESS ANALYST','DATABASE ADMINISTRATOR'];
-var CA='FIND AND ASSESS TALENT MORE EASILY.',CB='NOW YOU ARE THE ARCHITECT OF YOUR OWN CAREER JOURNEY.';
-var RAT=2.4,TILT=-24*Math.PI/180,DPHI=8*Math.PI/180,T_IN=2.2,HA=3.4,MO=2.8,HB=4.2,CYC=HA+MO+HB+MO,V=46,SC=30;
+var D=Math.PI/180;
+/* r = axis ratio, tilt in rad, k = 1 when tilted, tg = target perimeter relative to the circle */
+var SH=[
+ {t:'FIND AND ASSESS TALENT MORE EASILY.',r:1,tilt:0,k:0,tg:1},
+ {t:'NOW YOU ARE THE ARCHITECT OF YOUR OWN CAREER JOURNEY.',r:2.4,tilt:-24*D,k:1,tg:1.55},
+ {t:'BETTER DECISIONS FOR COMPANIES AND CANDIDATES, THE KIND ONLY A HUMAN CAN MAKE.',r:1.74,tilt:-24*D,k:1,tg:1.3}
+];
+var HOLD=[3.4,4.2,4.4],MO=2.8,DPHI=8*D,T_IN=2.2,V=46,SC=30,CYC=HOLD[0]+HOLD[1]+HOLD[2]+3*MO;
 var S={m:null,w:0,h:0,dpr:1,rows:[],pitch:18,fr:12,frac:0,scroll:0,loopH:0};
 function ringFont(f){return '500 '+f+'px Unbounded,"Arial Black",system-ui,sans-serif';}
 function roleFont(f){return '500 '+f+'px "Instrument Sans",system-ui,sans-serif';}
@@ -877,77 +884,82 @@ function glyphs(str,f,n){
   for(j=0;j<n;j++){for(i=0;i<str.length;i++){w=ctx.measureText(str.charAt(i)).width;out.push({c:str.charAt(i),x:x+w/2,q:k++/tot});x+=w+tr;}x+=f*2.6;}
   return {g:out,W:x};
 }
-function measure(f,w){
-  var A1=glyphs(CA,f,1).W,B1=glyphs(CB,f,1).W,pad=f*1.3,Rt=Math.min(190,(w-24)/2-pad);
-  var nA=Math.max(1,Math.round(2*Math.PI*Rt/A1)),ga=glyphs(CA,f,nA),Pc=ga.W;
-  var hwm=(w-2*pad-40)/2,nB=Math.max(1,Math.min(Math.round(Pc*1.55/B1),Math.floor(5*hwm/B1))),gb=glyphs(CB,f,nB),Pe=gb.W;
-  var b=Pe/perim(RAT,1),a=RAT*b,c=Math.cos(TILT),s=Math.sin(TILT),Rc=Pc/(2*Math.PI);
-  var hw=Math.sqrt(a*a*c*c+b*b*s*s),hh=Math.sqrt(a*a*s*s+b*b*c*c);
-  return {f:f,ga:ga,gb:gb,Pc:Pc,Pe:Pe,pad:pad,needW:2*Math.max(Rc,hw)+2*pad+40,needH:2*Math.max(Rc,hh)+2*pad+60};
+function measure(f,w,H0){
+  var pad=f*1.3,Rt=Math.min((w-24)/2-pad,H0*.34),hwm=(w-2*pad-40)/2,out=[],P0=0,nw=0,nh=0,i;
+  for(i=0;i<SH.length;i++){
+    var sh=SH[i],one=glyphs(sh.t,f,1).W,n,c=Math.cos(sh.tilt),s=Math.sin(sh.tilt);
+    var u=1/perim(sh.r,1),ua=sh.r*u,hw1=Math.sqrt(ua*ua*c*c+u*u*s*s),hh1=Math.sqrt(ua*ua*s*s+u*u*c*c);
+    n=i===0?Math.max(1,Math.round(2*Math.PI*Rt/one)):Math.max(1,Math.min(Math.round(P0*sh.tg/one),Math.floor(hwm/hw1/one)));
+    var g=glyphs(sh.t,f,n);if(i===0)P0=g.W;
+    out.push({g:g.g,W:g.W,r:sh.r,tilt:sh.tilt,k:sh.k});
+    nw=Math.max(nw,2*g.W*hw1);nh=Math.max(nh,2*g.W*hh1);
+  }
+  return {f:f,sh:out,pad:pad,needW:nw+2*pad+40,needH:nh+2*pad+60};
 }
 function layout(){
-  var w=Math.round(stage.clientWidth)||320,fb=w<560?12.5:16,m,f;
-  for(f=fb;f>=8;f-=.5){m=measure(f,w);if(m.needW<=w)break;}
-  S.m=m;S.w=w;S.h=Math.max(Math.round(m.needH),460,Math.min(Math.round(window.innerHeight*.82),680));
-  stage.style.height=S.h+'px';S.dpr=Math.min(window.devicePixelRatio||1,2);
+  var w=Math.round(stage.clientWidth)||320,H0=Math.min(Math.round(window.innerHeight*.92),1200),fb=w<560?12.5:Math.min(28,Math.max(16,w/75)),m,f;
+  for(f=fb;f>=8;f-=.5){m=measure(f,w,H0);if(m.needW<=w&&m.needH<=H0)break;}
+  S.m=m;S.w=w;S.h=Math.max(Math.round(m.needH),460,H0);
+  stage.style.height=S.h+'px';S.dpr=Math.min(window.devicePixelRatio||1,2,Math.sqrt(8e6/(w*S.h)));
   cv.width=Math.round(w*S.dpr);cv.height=Math.round(S.h*S.dpr);
-  S.fr=Math.max(12,Math.min(17,m.f*1.15));S.pitch=Math.round(S.fr*1.6);
+  S.fr=Math.max(12,Math.min(30,m.f*1.15));S.pitch=Math.round(S.fr*1.6);
   ctx.font=roleFont(S.fr);
-  var R=Math.ceil(S.h/S.pitch)+3,rnd=rng(11),r,i,j,t,str,tw,pw;
+  var R=Math.ceil(S.h/S.pitch)+3,rnd=rng(11),r,i,j,t,str,tw,pw,q;
   S.loopH=R*S.pitch;S.rows=[];
   for(r=0;r<R;r++){
     var ph=rnd()*240;str='';tw=0;
-    while(tw<w+ph+60){t=ROLES.slice();for(i=t.length-1;i>0;i--){j=Math.floor(rnd()*(i+1));var q=t[i];t[i]=t[j];t[j]=q;}
+    while(tw<w+ph+60){t=ROLES.slice();for(i=t.length-1;i>0;i--){j=Math.floor(rnd()*(i+1));q=t[i];t[i]=t[j];t[j]=q;}
       pw=t.join('.  ')+'.  ';str+=pw;tw+=ctx.measureText(pw).width;}
-    var ws=[],re=/\S+/g,mt,wx;while((mt=re.exec(str))){wx=ctx.measureText(str.slice(0,mt.index)).width-ph;ws.push({s:mt[0],x:wx,w:ctx.measureText(mt[0]).width});if(wx>w+10)break;}
+    var ws=[],re=/\S+/g,mt,wx;
+    while((mt=re.exec(str))){wx=ctx.measureText(str.slice(0,mt.index)).width-ph;ws.push({s:mt[0],x:wx,w:ctx.measureText(mt[0]).width});if(wx>w+10)break;}
     S.rows.push({s:str,ph:ph,ws:ws});
   }
 }
-function layer(G,W,prog,tb,f,frac,ph,cx,cy,g,sa,ca,d){
+function layer(sh,prog,tb,f,ph,cx,cy,g,sa,ca,d){
   if(prog<=0)return;
-  var P=tb.P,i,lo,hi,mid,th,gl,al,sd,ang,c,s,px,py,rr;
+  var G=sh.g,W=sh.W,P=tb.P,i,lo,hi,mid,th,gl,al,sd,ang,c,s,px,py,rr,k,lx,ly;
   for(i=0;i<G.length;i++){
     gl=G[i];if(gl.c===' ')continue;
     al=cl(prog*2.2-gl.q*1.2);if(al<=0)continue;
-    sd=(((gl.x/W)+frac)%1)*P;lo=0;hi=tb.N;
+    sd=(((gl.x/W)+S.frac)%1)*P;lo=0;hi=tb.N;
     while(hi-lo>1){mid=(lo+hi)>>1;if(tb.L[mid]<=sd)lo=mid;else hi=mid;}
     th=-Math.PI/2+2*Math.PI*(lo+(sd-tb.L[lo])/((tb.L[hi]-tb.L[lo])||1))/tb.N;
-    var lx=tb.a*Math.cos(th),ly=tb.b*Math.sin(th);
+    lx=tb.a*Math.cos(th);ly=tb.b*Math.sin(th);
     px=cx+lx*ca-ly*sa;py=cy+lx*sa+ly*ca;
     ang=Math.atan2(tb.b*Math.cos(th),-tb.a*Math.sin(th))+ph;
-    c=Math.cos(ang);s=Math.sin(ang);rr=(1-al)*f*1.6;
-    px+=s*rr;py-=c*rr;
-    var k=g*(.7+.3*al);
-    ctx.globalAlpha=al*g;
+    c=Math.cos(ang);s=Math.sin(ang);rr=(1-al)*f*1.6;px+=s*rr;py-=c*rr;
+    k=g*(.7+.3*al);ctx.globalAlpha=al*g;
     ctx.setTransform(c*k*d,s*k*d,-s*k*d,c*k*d,px*d,py*d);
     ctx.fillText(gl.c,0,f*.35);
   }
 }
+function state(t,still){
+  var u=still?0:Math.max(0,t-T_IN)%CYC,i,p;
+  for(i=0;i<3;i++){
+    if(u<HOLD[i])return {i:i,j:i,e:0,bo:0};u-=HOLD[i];
+    if(u<MO){p=u/MO;return {i:i,j:(i+1)%3,e:ease(p),bo:Math.sin(Math.PI*p)};}u-=MO;
+  }
+  return {i:0,j:0,e:0,bo:0};
+}
 function draw(t,dt,still){
   var m=S.m,w=S.w,h=S.h,d=S.dpr,i;
-  var g=still?1:easeOut(cl(t/T_IN)),intro=still?1:cl((t-.4)/(T_IN-.4)),u=still?0:Math.max(0,t-T_IN)%CYC,mm,boost=0,p;
-  if(u<HA)mm=0;else if(u<HA+MO){p=(u-HA)/MO;mm=ease(p);boost=Math.sin(Math.PI*p);}
-  else if(u<HA+MO+HB)mm=1;else{p=(u-HA-MO-HB)/MO;mm=1-ease(p);boost=Math.sin(Math.PI*p);}
-  var P=m.Pc+(m.Pe-m.Pc)*mm,r=1+(RAT-1)*mm,b=P/perim(r,1)*g,a=r*b/g*g;
-  var sw=Math.sin(2*Math.PI*t/10),sw2=Math.cos(2*Math.PI*t/10),k2=still?0:.35+.65*mm;
-  var phi=TILT*mm+(still?0:DPHI*sw*mm),cx=w/2+9.6*sw*k2,cy=S.h/2-5*sw2*k2,sa=Math.sin(phi),ca=Math.cos(phi);
-  if(!still&&dt){S.frac+=dt*V/P*(1+1.3*boost);S.scroll+=dt*SC*(1+.8*boost);}
+  var g=still?1:easeOut(cl(t/T_IN)),intro=still?1:cl((t-.4)/(T_IN-.4)),st=state(t,still),s0=m.sh[st.i],s1=m.sh[st.j],e=st.e;
+  var P=s0.W+(s1.W-s0.W)*e,r=s0.r+(s1.r-s0.r)*e,kt=s0.k+(s1.k-s0.k)*e,phi0=s0.tilt+(s1.tilt-s0.tilt)*e;
+  var b=P/perim(r,1)*g,a=r*b;
+  var sw=Math.sin(2*Math.PI*t/10),sw2=Math.cos(2*Math.PI*t/10),k2=still?0:.35+.65*kt;
+  var phi=phi0+(still?0:DPHI*sw*kt),cx=w/2+9.6*sw*k2,cy=h/2-5*sw2*k2,sa=Math.sin(phi),ca=Math.cos(phi);
+  if(!still&&dt){S.frac+=dt*V/P*(1+1.3*st.bo);S.scroll+=dt*SC*(1+.8*st.bo);}
   ctx.setTransform(d,0,0,d,0,0);ctx.globalAlpha=1;ctx.clearRect(0,0,w,h);
-  /* roles: fixed columns, scrolling upward */
-  var base=still?1:easeOut(cl(t/1.2));
-  ctx.globalAlpha=base;
+  /* roles: fixed columns scrolling upward; whole words dodge the shape */
+  var base=still?1:easeOut(cl(t/1.2)),mg=m.pad+m.f*1.2,Ah=a+mg*g,Bh=b+mg*g,ia=1/(Ah*Ah),ib=1/(Bh*Bh),qa=ca*ca*ia+sa*sa*ib,fd=m.f*3.2;
   ctx.font=roleFont(S.fr);ctx.fillStyle='rgba(255,255,255,.34)';ctx.textBaseline='middle';ctx.textAlign='left';
   for(i=0;i<S.rows.length;i++){
     var y=(((i*S.pitch-S.scroll)%S.loopH)+S.loopH)%S.loopH-S.pitch;
     if(y>h+S.pitch)continue;
     var row=S.rows[i],dy=y-cy,xl=1e9,xr=-1e9;
-    if(g>0){
-      var mg=m.pad+m.f*1.2,A=a+mg*g,B=b+mg*g,c2=Math.cos(phi),s2=Math.sin(phi),ia=1/(A*A),ib=1/(B*B);
-      var qa=c2*c2*ia+s2*s2*ib,qb=2*dy*c2*s2*(ia-ib),qc=dy*dy*(s2*s2*ia+c2*c2*ib)-1,ds=qb*qb-4*qa*qc;
-      if(ds>=0){var sq=Math.sqrt(ds);xl=cx+(-qb-sq)/(2*qa);xr=cx+(-qb+sq)/(2*qa);}
-    }
+    if(g>0){var qb=2*dy*ca*sa*(ia-ib),qc=dy*dy*(sa*sa*ia+ca*ca*ib)-1,ds=qb*qb-4*qa*qc;if(ds>=0){var sq=Math.sqrt(ds);xl=cx+(-qb-sq)/(2*qa);xr=cx+(-qb+sq)/(2*qa);}}
     if(xl>xr){ctx.globalAlpha=base;ctx.fillText(row.s,-row.ph,y);continue;}
-    var fd=m.f*3.2,j,wd,x0,x1,gp,al,left;
+    var j,wd,x0,x1,gp,al,left;
     for(j=0;j<row.ws.length;j++){
       wd=row.ws[j];x0=wd.x;x1=x0+wd.w;
       if(x1<=xl){gp=xl-x1;left=-1;}else if(x0>=xr){gp=x0-xr;left=1;}else continue;
@@ -956,20 +968,18 @@ function draw(t,dt,still){
     }
   }
   ctx.globalAlpha=1;
-  /* roles near the hole read brighter */
-  if(g>0){
-    ctx.globalCompositeOperation='source-atop';ctx.save();ctx.translate(cx,cy);ctx.rotate(phi);ctx.scale(1,Math.max(.2,b/a));
-    var gr=ctx.createRadialGradient(0,0,a*.6,0,0,a*2.3);gr.addColorStop(0,'rgba(255,255,255,.55)');gr.addColorStop(.5,'rgba(255,255,255,.22)');gr.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.fillStyle=gr;ctx.fillRect(-a*3,-a*3,a*6,a*6);ctx.restore();
-    ctx.globalCompositeOperation='source-over';
-  }else return;
-  var N=360,L=[0],th,x0,y0,x1,y1;
-  x0=0;y0=-b;
-  for(i=1;i<=N;i++){th=-Math.PI/2+2*Math.PI*i/N;x1=a*Math.cos(th);y1=b*Math.sin(th);L[i]=L[i-1]+Math.hypot(x1-x0,y1-y0);x0=x1;y0=y1;}
+  if(g<=0)return;
+  /* roles near the shape read brighter */
+  ctx.globalCompositeOperation='source-atop';ctx.save();ctx.translate(cx,cy);ctx.rotate(phi);ctx.scale(1,Math.max(.2,b/a));
+  var gr=ctx.createRadialGradient(0,0,a*.6,0,0,a*2.3);gr.addColorStop(0,'rgba(255,255,255,.55)');gr.addColorStop(.5,'rgba(255,255,255,.22)');gr.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=gr;ctx.fillRect(-a*3,-a*3,a*6,a*6);ctx.restore();ctx.globalCompositeOperation='source-over';
+  /* arc-length table of the current ellipse, then the claim glyphs of the two shapes involved */
+  var N=360,L=[0],th,x1b,y1b,x0b=0,y0b=-b;
+  for(i=1;i<=N;i++){th=-Math.PI/2+2*Math.PI*i/N;x1b=a*Math.cos(th);y1b=b*Math.sin(th);L[i]=L[i-1]+Math.hypot(x1b-x0b,y1b-y0b);x0b=x1b;y0b=y1b;}
   var tb={a:a,b:b,N:N,L:L,P:L[N]};
   ctx.font=ringFont(m.f);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  layer(m.ga.g,m.ga.W,Math.min(1-cl(mm*1.7),intro),tb,m.f,S.frac,phi,cx,cy,g,sa,ca,d);
-  layer(m.gb.g,m.gb.W,cl((mm-.35)*1.6),tb,m.f,S.frac,phi,cx,cy,g,sa,ca,d);
+  if(st.i===st.j)layer(s0,intro,tb,m.f,phi,cx,cy,g,sa,ca,d);
+  else{layer(s0,Math.min(1-cl(e*1.7),intro),tb,m.f,phi,cx,cy,g,sa,ca,d);layer(s1,cl((e-.35)*1.6),tb,m.f,phi,cx,cy,g,sa,ca,d);}
   ctx.setTransform(d,0,0,d,0,0);ctx.globalAlpha=1;
 }
 var run=false,last=0,T=0,raf=0;
@@ -979,8 +989,8 @@ function stop(){run=false;cancelAnimationFrame(raf);}
 function init(){
   layout();draw(T,0,reduce);
   if('IntersectionObserver' in window){new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();else stop();});},{threshold:.2}).observe(stage);}else start();
-  var lw=S.w,tm;
-  window.addEventListener('resize',function(){clearTimeout(tm);tm=setTimeout(function(){var nw=Math.round(stage.clientWidth);if(nw!==lw){lw=nw;layout();draw(T,0,reduce);}},120);});
+  var lw=S.w,lh=window.innerHeight,tm;
+  window.addEventListener('resize',function(){clearTimeout(tm);tm=setTimeout(function(){var nw=Math.round(stage.clientWidth);if(nw!==lw||Math.abs(window.innerHeight-lh)>150){lw=nw;lh=window.innerHeight;layout();draw(T,0,reduce);}},120);});
 }
 var done=false;function go(){if(done)return;done=true;init();}
 if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('500 12px Unbounded','FIND'),document.fonts.load('500 12px "Instrument Sans"','FIND')]).then(go,go);setTimeout(go,2000);}else go();
