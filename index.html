@@ -607,7 +607,7 @@ main{justify-content:flex-start;gap:clamp(48px,9vh,96px)}
 </section>
 </div>
 <section class="tf" id="tf" lang="en" dir="ltr" aria-labelledby="tf-h">
-<h2 class="tf-sr" id="tf-h">Find and assess talent more easily. Now you are the architect of your own career journey. Better decisions that only a human can make.</h2>
+<h2 class="tf-sr" id="tf-h">Find and assess talent. Architect your career journey. Make decisions that only a human can make.</h2>
 <div class="tf-stage"><canvas aria-hidden="true"></canvas></div>
 </section>
 </main>
@@ -861,21 +861,31 @@ var stage=host.querySelector('.tf-stage'),cv=stage.querySelector('canvas'),ctx=c
 var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* background orbit ellipse fades out while this section is on screen */
 if('IntersectionObserver' in window)new IntersectionObserver(function(es){es.forEach(function(e){document.documentElement.classList.toggle('tf-on',e.isIntersecting);});},{threshold:.15}).observe(stage);
-var ROLES=['FULL-STACK DEVELOPER','FRONTEND DEVELOPER','BACKEND DEVELOPER','DEVOPS ENGINEER','DATA SCIENTIST','DATA ENGINEER','MACHINE LEARNING ENGINEER','AI ENGINEER','MOBILE DEVELOPER','CLOUD ARCHITECT','SECURITY ENGINEER','SITE RELIABILITY ENGINEER','QA ENGINEER','PLATFORM ENGINEER','EMBEDDED ENGINEER','GAME DEVELOPER','SOFTWARE ARCHITECT','TECH LEAD','ENGINEERING MANAGER','PRODUCT MANAGER','PRODUCT DESIGNER','UX RESEARCHER','BUSINESS ANALYST','DATABASE ADMINISTRATOR'];
+/* roles: every discipline, from regular positions up to the very top (no junior tier) */
+var TECH=['FRONTEND DEVELOPER','BACKEND DEVELOPER','FULL-STACK DEVELOPER','SOFTWARE ENGINEER','MOBILE DEVELOPER','IOS DEVELOPER','ANDROID DEVELOPER','REACT DEVELOPER','JAVA DEVELOPER','PYTHON DEVELOPER','.NET DEVELOPER','GO DEVELOPER','RUST ENGINEER','DEVOPS ENGINEER','CLOUD ENGINEER','PLATFORM ENGINEER','SITE RELIABILITY ENGINEER','SECURITY ENGINEER','NETWORK ENGINEER','DATA ENGINEER','DATA SCIENTIST','MACHINE LEARNING ENGINEER','MLOPS ENGINEER','AI ENGINEER','QA ENGINEER','TEST AUTOMATION ENGINEER','EMBEDDED ENGINEER','FIRMWARE ENGINEER','GAME DEVELOPER','GRAPHICS ENGINEER','ROBOTICS ENGINEER','BLOCKCHAIN ENGINEER','SOLUTIONS ARCHITECT','DATABASE ADMINISTRATOR','RELEASE ENGINEER'];
+var OTHER=['PRODUCT MANAGER','PRODUCT DESIGNER','UX RESEARCHER','UX DESIGNER','BUSINESS ANALYST','DATA ANALYST','BI DEVELOPER','SCRUM MASTER','TECHNICAL WRITER','IT PROJECT MANAGER','CYBERSECURITY ANALYST','SYSTEMS ADMINISTRATOR','IT SUPPORT SPECIALIST','SAP CONSULTANT','SALESFORCE DEVELOPER','DEVELOPER ADVOCATE','PRODUCT OWNER'];
+var TOP=['CHIEF TECHNOLOGY OFFICER','CHIEF INFORMATION OFFICER','CHIEF DATA OFFICER','CHIEF PRODUCT OFFICER','CHIEF INFORMATION SECURITY OFFICER','VP OF ENGINEERING','VP OF PRODUCT','HEAD OF ENGINEERING','HEAD OF DATA','HEAD OF DESIGN','HEAD OF PLATFORM','HEAD OF SECURITY','DIRECTOR OF ENGINEERING','DISTINGUISHED ENGINEER','FELLOW ENGINEER','CHIEF ARCHITECT','PRINCIPAL ENGINEER','STAFF ENGINEER','ENGINEERING MANAGER','TECH LEAD','TEAM LEAD','SOFTWARE ARCHITECT','SOFTWARE ENGINEER','SENIOR SOFTWARE ENGINEER','LEAD SOFTWARE ENGINEER','STAFF SOFTWARE ENGINEER','PRINCIPAL SOFTWARE ENGINEER'];
+var ROLES=(function(){var r=rng(7),o=TOP.slice(),i,x,ex=['LEAD','STAFF','PRINCIPAL','LEAD'];
+  for(i=0;i<TECH.length;i++){x=TECH[i];o.push(x,x,'SENIOR '+x,ex[Math.floor(r()*ex.length)]+' '+x);}
+  for(i=0;i<OTHER.length;i++){x=OTHER[i];o.push(x,x,'SENIOR '+x);}
+  return o;})();
 var D=Math.PI/180;
 /* r = axis ratio, tilt in rad, k = 1 when tilted, tg = target perimeter relative to the circle */
 var SH=[
- {t:'FIND AND ASSESS TALENT MORE EASILY.',r:1,tilt:0,k:0,tg:1},
- {t:'NOW YOU ARE THE ARCHITECT OF YOUR OWN CAREER JOURNEY.',r:2.4,tilt:-24*D,k:1,tg:1.55},
- {t:'BETTER DECISIONS THAT ONLY A HUMAN CAN MAKE.',r:1.74,tilt:-24*D,k:1,tg:1.3}
+ {t:'FIND AND ASSESS TALENT.',r:1,tilt:0,k:0,tg:1},
+ {t:'ARCHITECT YOUR CAREER JOURNEY.',r:2.4,tilt:-24*D,k:1,tg:1.55},
+ {t:'MAKE DECISIONS THAT ONLY A HUMAN CAN MAKE.',r:1.74,tilt:-24*D,k:1,tg:1.3}
 ];
-var HOLD=[3.4,4.2,4.4],MO=2.8,DPHI=8*D,T_IN=2.2,V=46,SC=30,CYC=HOLD[0]+HOLD[1]+HOLD[2]+3*MO;
+var HOLD=[3.4,4.2,4.4],MO=4.4,DPHI=8*D,T_IN=2.2,V=46,SC=30,CYC=HOLD[0]+HOLD[1]+HOLD[2]+3*MO;
 var S={m:null,w:0,h:0,dpr:1,rows:[],pitch:18,fr:12,frac:0,scroll:0,loopH:0};
 function ringFont(f){return '500 '+f+'px Unbounded,"Arial Black",system-ui,sans-serif';}
 function roleFont(f){return '500 '+f+'px "Instrument Sans",system-ui,sans-serif';}
 function perim(a,b){return Math.PI*(3*(a+b)-Math.sqrt((3*a+b)*(a+3*b)));}
 function ease(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;}
 function easeOut(x){return 1-Math.pow(1-x,3);}
+function eio(x,c){var c2=c*1.525;return x<.5?(Math.pow(2*x,2)*((c2+1)*2*x-c2))/2:(Math.pow(2*x-2,2)*((c2+1)*(x*2-2)+c2)+2)/2;}
+function sm5(x){x=x<0?0:x>1?1:x;return x*x*x*(x*(x*6-15)+10);}
+function sm3(x){x=x<0?0:x>1?1:x;return x*x*(3-2*x);}
 function cl(x){return x<0?0:x>1?1:x;}
 function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 function glyphs(str,f,n){
@@ -908,26 +918,34 @@ function layout(){
   S.loopH=R*S.pitch;S.rows=[];
   for(r=0;r<R;r++){
     var ph=rnd()*240;str='';tw=0;
-    while(tw<w+ph+60){t=ROLES.slice();for(i=t.length-1;i>0;i--){j=Math.floor(rnd()*(i+1));q=t[i];t[i]=t[j];t[j]=q;}
-      pw=t.join('.  ')+'.  ';str+=pw;tw+=ctx.measureText(pw).width;}
+    var ix=0;t=[];
+    while(tw<w+ph+60){if(ix>=t.length){t=ROLES.slice();for(i=t.length-1;i>0;i--){j=Math.floor(rnd()*(i+1));q=t[i];t[i]=t[j];t[j]=q;}ix=0;}
+      pw=t[ix++]+'.  ';str+=pw;tw+=ctx.measureText(pw).width;}
     var ws=[],re=/\S+/g,mt,wx;
     while((mt=re.exec(str))){wx=ctx.measureText(str.slice(0,mt.index)).width-ph;ws.push({s:mt[0],x:wx,w:ctx.measureText(mt[0]).width});if(wx>w+10)break;}
     S.rows.push({s:str,ph:ph,ws:ws});
   }
 }
-function layer(sh,prog,tb,f,ph,cx,cy,g,sa,ca,d){
-  if(prog<=0)return;
+function layer(sh,prog,tb,f,ph,cx,cy,g,sa,ca,d,mode){
+  if(!mode&&prog<=0)return;
   var G=sh.g,W=sh.W,P=tb.P,i,lo,hi,mid,th,gl,al,sd,ang,c,s,px,py,rr,k,lx,ly;
   for(i=0;i<G.length;i++){
     gl=G[i];if(gl.c===' ')continue;
-    al=cl(prog*2.2-gl.q*1.2);if(al<=0)continue;
+    if(mode===1)al=1-sm3(prog*1.9-gl.q*.6);else if(mode===2)al=sm3((prog-.15)*1.9-gl.q*.6);else al=cl(prog*2.2-gl.q*1.2);
+    if(al<=0)continue;
     sd=(((gl.x/W)+S.frac)%1)*P;lo=0;hi=tb.N;
     while(hi-lo>1){mid=(lo+hi)>>1;if(tb.L[mid]<=sd)lo=mid;else hi=mid;}
     th=-Math.PI/2+2*Math.PI*(lo+(sd-tb.L[lo])/((tb.L[hi]-tb.L[lo])||1))/tb.N;
     lx=tb.a*Math.cos(th);ly=tb.b*Math.sin(th);
     px=cx+lx*ca-ly*sa;py=cy+lx*sa+ly*ca;
     ang=Math.atan2(tb.b*Math.cos(th),-tb.a*Math.sin(th))+ph;
-    c=Math.cos(ang);s=Math.sin(ang);rr=(1-al)*f*1.6;px+=s*rr;py-=c*rr;
+    c=Math.cos(ang);s=Math.sin(ang);
+    if(mode){var u1=1-al;
+      /* smooth drift: leaving glyphs sink inward, arriving ones glide in from outside */
+      rr=mode===1?-u1*f*.9:u1*f*1.3;
+      var tt=(mode===1?1:-1)*u1*f*.7;
+      px+=s*rr+c*tt;py+=-c*rr+s*tt;
+    }else{rr=(1-al)*f*1.6;px+=s*rr;py-=c*rr;}
     k=g*(.7+.3*al);ctx.globalAlpha=al*g;
     ctx.setTransform(c*k*d,s*k*d,-s*k*d,c*k*d,px*d,py*d);
     ctx.fillText(gl.c,0,f*.35);
@@ -936,19 +954,20 @@ function layer(sh,prog,tb,f,ph,cx,cy,g,sa,ca,d){
 function state(t,still){
   var u=still?0:Math.max(0,t-T_IN)%CYC,i,p;
   for(i=0;i<3;i++){
-    if(u<HOLD[i])return {i:i,j:i,e:0,bo:0};u-=HOLD[i];
-    if(u<MO){p=u/MO;return {i:i,j:(i+1)%3,e:ease(p),bo:Math.sin(Math.PI*p)};}u-=MO;
+    if(u<HOLD[i])return {i:i,j:i,e:0,p:0,bo:0};u-=HOLD[i];
+    if(u<MO){p=u/MO;return {i:i,j:(i+1)%3,e:ease(p),p:p,bo:Math.sin(Math.PI*p)};}u-=MO;
   }
-  return {i:0,j:0,e:0,bo:0};
+  return {i:0,j:0,e:0,p:0,bo:0};
 }
 function draw(t,dt,still){
   var m=S.m,w=S.w,h=S.h,d=S.dpr,i;
   var g=still?1:easeOut(cl(t/T_IN)),intro=still?1:cl((t-.4)/(T_IN-.4)),st=state(t,still),s0=m.sh[st.i],s1=m.sh[st.j],e=st.e;
-  var P=s0.W+(s1.W-s0.W)*e,r=s0.r+(s1.r-s0.r)*e,kt=s0.k+(s1.k-s0.k)*e,phi0=s0.tilt+(s1.tilt-s0.tilt)*e;
+  var pr=st.p,er=sm5(pr),ep=sm5((pr-.05)/.95);
+  var P=(s0.W+(s1.W-s0.W)*e)*1,r=Math.max(.35,s0.r+(s1.r-s0.r)*er),kt=s0.k+(s1.k-s0.k)*e,phi0=s0.tilt+(s1.tilt-s0.tilt)*ep;
   var b=P/perim(r,1)*g,a=r*b;
   var sw=Math.sin(2*Math.PI*t/10),sw2=Math.cos(2*Math.PI*t/10),k2=still?0:.35+.65*kt;
   var phi=phi0+(still?0:DPHI*sw*kt),cx=w/2+9.6*sw*k2,cy=h/2-5*sw2*k2,sa=Math.sin(phi),ca=Math.cos(phi);
-  if(!still&&dt){S.frac+=dt*V/P*(1+1.3*st.bo);S.scroll+=dt*SC*(1+.8*st.bo);}
+  if(!still&&dt){S.frac+=dt*V/P*(1+.6*st.bo);S.scroll+=dt*SC*(1+.4*st.bo);}
   ctx.setTransform(d,0,0,d,0,0);ctx.globalAlpha=1;ctx.clearRect(0,0,w,h);
   /* roles: fixed columns scrolling upward; whole words dodge the shape */
   var base=still?1:easeOut(cl(t/1.2)),mg=m.pad+m.f*1.2,Ah=a+mg*g,Bh=b+mg*g,ia=1/(Ah*Ah),ib=1/(Bh*Bh),qa=ca*ca*ia+sa*sa*ib,fd=m.f*3.2;
@@ -978,8 +997,8 @@ function draw(t,dt,still){
   for(i=1;i<=N;i++){th=-Math.PI/2+2*Math.PI*i/N;x1b=a*Math.cos(th);y1b=b*Math.sin(th);L[i]=L[i-1]+Math.hypot(x1b-x0b,y1b-y0b);x0b=x1b;y0b=y1b;}
   var tb={a:a,b:b,N:N,L:L,P:L[N]};
   ctx.font=ringFont(m.f);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  if(st.i===st.j)layer(s0,intro,tb,m.f,phi,cx,cy,g,sa,ca,d);
-  else{layer(s0,Math.min(1-cl(e*1.7),intro),tb,m.f,phi,cx,cy,g,sa,ca,d);layer(s1,cl((e-.35)*1.6),tb,m.f,phi,cx,cy,g,sa,ca,d);}
+  if(st.i===st.j)layer(s0,intro,tb,m.f,phi,cx,cy,g,sa,ca,d,0);
+  else{layer(s0,st.p,tb,m.f,phi,cx,cy,g,sa,ca,d,1);layer(s1,st.p,tb,m.f,phi,cx,cy,g,sa,ca,d,2);}
   ctx.setTransform(d,0,0,d,0,0);ctx.globalAlpha=1;
 }
 var run=false,last=0,T=0,raf=0;
